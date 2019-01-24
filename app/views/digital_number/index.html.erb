@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="jumbotron" style="background-color: steelblue"> 
+    <h1>Parse invoice numbers</h1>  
+    <h2>7-segment invoice numbers to the parsed invoice numbers</h2>
+  </div>
+</div>
+
+<div class="container">
+	<form enctype="multipart/form-data">
+	    <input name="file" class="btn btn-default"  type="file" id="file"/>
+	    <br>
+	    <button type="button" class="btn btn-primary" id="submit">Convert</button>
+	</form>
+
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th scope="col">S.No</th>
+	      <th scope="col">Input</th>
+	      <th scope="col">Output</th>
+	    </tr>
+	  </thead>
+	  <tbody id="body_data">
+	    
+	  </tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+	  $("#submit").on("click",function () {
+		$("#body_data").empty()
+
+	  	var uploaded_file = document.getElementById("file");
+	    var file = uploaded_file.files[0];
+	  	if(file == undefined)
+	  	{
+	  		alert("Please select file first")
+	  		return
+	  	}
+	    var data = new FormData();
+        data.append("file_content",file);
+
+		$.ajax({
+	      type: "POST",
+	      url: "/digital_number/get_numbers",
+	       contentType: false,
+		      dataType: 'json',
+		      data: data,
+		      processData: false,
+	      	success: function(response){
+	      	data = response.data
+	      	for (var i = 0; i < data.length; i++) {
+	      		html=""
+	      		html+="<tr><td>"+(i+1)+"</td>"
+	      		input = data[i]["input"]
+	      		html+="<td style='white-space: pre;'>"+input+"</td>"
+	      		html+="<td><h3>"+data[i]["output"]+"</h3></td></tr>"
+	      		$("#body_data").append(html)
+
+	      	}
+	      }
+	    })
+	})
+	});
+	
+
+</script>
